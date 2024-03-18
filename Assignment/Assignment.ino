@@ -7,12 +7,17 @@ Zumo32U4Motors motors;
 Zumo32U4Buzzer buzzer;
 Zumo32U4ButtonA buttonA;
 
-unsigned long previousMillis = 0;        // Stores the last time the task was done
-const long interval = 1000;              // Interval in milliseconds (1 second)
+unsigned long previousMillis = 0;      
+const long interval = 1000;            
+const int detectionThreshHold = 400;  
+const int MAX_TURNS = 200;  
+
 
 unsigned int lineSensorValues[3];
 int reverseCounter = 0;
+int turnCounter = 0;
 int HouseCounter = 0;
+int currentTurnIndex = 0; 
 
 struct Turn {
   bool turnLeft;
@@ -21,9 +26,7 @@ struct Turn {
   int reverseDuration;
 };
 
-const int MAX_TURNS = 200;  
 Turn turnLog[MAX_TURNS];
-int currentTurnIndex = 0;  
 
 void turn(int direction, int speed, int duration) {  
   if (direction == 0) {                              
@@ -54,19 +57,30 @@ void proxScanner()
     {
           motors.setSpeeds(0, 0);
           HouseCounter++;
-          buzzer.playFromProgramSpace(PSTR("!>>a32"));
-          delay(150);
-          turn(0, 150, 800);  
+          for(int i = 0; i < HouseCounter; i++)
+          {
+            buzzer.playFromProgramSpace(PSTR("!>>a32"));
+            delay(100);
+          }
+          lineSensors.initThreeSensors();  
+          turn(0, 150, 800);
      } 
+
+  if(HouseCounter >= 3)
+  {
+    // homeFunction();
   }
+}
 void homeFunction() {
+  motors.setSpeeds(0, 0);
   for (currentTurnIndex > 0; currentTurnIndex--;) {
     Turn currentTurn = turnLog[currentTurnIndex];
+    int direction = currentTurn.turnLeft ? 0 : 1;
     if (currentTurn.reverse == false) {
-      turn((currentTurn.turnLeft) ? 0 : 1, 125, currentTurn.duration);
+      turn(direction , 125, currentTurn.duration);
     } else {
       reverse(currentTurn.reverseDuration);
-      turn(((currentTurn.turnLeft) ? 0 : 1), 125, currentTurn.duration);
+      turn(direction, 125, currentTurn.duration);
     }
   }
 }
@@ -114,12 +128,22 @@ void loop() {
     }
 
   motors.setSpeeds(75, 75);
-  if (lineSensorValues[0] > 500 || lineSensorValues[1] > 500 || lineSensorValues[2] > 500) {
+  if (lineSensorValues[0] > detectionThreshHold || lineSensorValues[1] > detectionThreshHold || lineSensorValues[2] > detectionThreshHold) {
 
-    if (lineSensorValues[0] > 600)  
+    if (lineSensorValues[0] > detectionThreshHold)  
     {
-      turn(1, 100, 125);  
-      if (currentTurnIndex < MAX_TURNS) {
+    if(turnCounter < 3)
+          {
+          turn(1, 100, 125);  
+          turnCounter++;
+          }
+          else
+          {
+            turnCounter = 0;
+            reverse(150);
+            turn(1, 100, 125);  
+          }        
+        if (currentTurnIndex < MAX_TURNS) {
         turnLog[currentTurnIndex].turnLeft = false;  
         turnLog[currentTurnIndex].duration = 125;
         turnLog[currentTurnIndex].reverse = false;
@@ -128,10 +152,20 @@ void loop() {
       }
     }
 
-    if (lineSensorValues[2] > 600)  
+    if (lineSensorValues[2] > detectionThreshHold)  
     {
-      turn(0, 100, 125);  
-      if (currentTurnIndex < MAX_TURNS) {
+    if(turnCounter < 3)
+          {
+          turn(0, 100, 125);  
+          turnCounter++;
+          }
+          else
+          {
+            turnCounter = 0;
+            reverse(150);
+            turn(0, 100, 125);  
+          }       
+        if (currentTurnIndex < MAX_TURNS) {
         turnLog[currentTurnIndex].turnLeft = true;  
         turnLog[currentTurnIndex].duration = 125;
         turnLog[currentTurnIndex].reverse = false;
@@ -139,10 +173,20 @@ void loop() {
         currentTurnIndex++;
       }
 
-      if (lineSensorValues[2] > 600 && lineSensorValues[1] > 600)  
+      if (lineSensorValues[2] > detectionThreshHold && lineSensorValues[1] > detectionThreshHold)  
       {
-        reverse(150);
-        turn(0, 100, 125);  
+         if(turnCounter < 3)
+          {
+          reverse(150);
+          turn(0, 100, 125);  
+          turnCounter++;
+          }
+          else
+          {
+            turnCounter = 0;
+            reverse(300);
+            turn(0, 100, 125);  
+          } 
         if (currentTurnIndex < MAX_TURNS) {
           turnLog[currentTurnIndex].turnLeft = true;  
           turnLog[currentTurnIndex].duration = 125;
@@ -151,23 +195,20 @@ void loop() {
           currentTurnIndex++;
         }
 
-        if (lineSensorValues[0] > 600 && lineSensorValues[1] > 600)  
+        if (lineSensorValues[0] > detectionThreshHold && lineSensorValues[1] > detectionThreshHold)  
         {
-          reverse(150);
-          turn(1, 100, 125);  
-          if (currentTurnIndex < MAX_TURNS) {
-            turnLog[currentTurnIndex].turnLeft = false;  
-            turnLog[currentTurnIndex].duration = 125;
-            turnLog[currentTurnIndex].reverse = true;
-            turnLog[currentTurnIndex].reverseDuration = 150;
-            currentTurnIndex++;
-          }
-        }
-
-        if (lineSensorValues[0] > 600 && lineSensorValues[2] > 600)  
-        {
+          if(turnCounter < 3)
+          {
           reverse(150);
           turn(1, 100, 125);
+          turnCounter++;
+          }
+          else
+          {
+            turnCounter = 0;
+            reverse(300);
+            turn(1, 100, 125);  
+          }
           if (currentTurnIndex < MAX_TURNS) {
             turnLog[currentTurnIndex].turnLeft = false;  
             turnLog[currentTurnIndex].duration = 125;
@@ -177,7 +218,30 @@ void loop() {
           }
         }
 
-        if (lineSensorValues[1] > 500)  
+        if (lineSensorValues[0] > detectionThreshHold && lineSensorValues[2] > detectionThreshHold)  
+        {
+            if(turnCounter < 3)
+          {
+          reverse(150);
+          turn(1, 100, 125);
+          turnCounter++;
+          }
+          else
+          {
+            turnCounter = 0;
+            reverse(300);
+            turn(1, 100, 125);  
+          }
+          if (currentTurnIndex < MAX_TURNS) {
+            turnLog[currentTurnIndex].turnLeft = false;  
+            turnLog[currentTurnIndex].duration = 125;
+            turnLog[currentTurnIndex].reverse = true;
+            turnLog[currentTurnIndex].reverseDuration = 150;
+            currentTurnIndex++;
+          }
+        }
+
+        if (lineSensorValues[1] > detectionThreshHold)  
         {
           reverseCounter++;
           if (reverseCounter < 3) {
