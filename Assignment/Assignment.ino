@@ -9,7 +9,7 @@ Zumo32U4ButtonA buttonA;
 
 unsigned long previousMillis = 0;      
 const long interval = 1000;            
-const int detectionThreshHold = 400;  
+const int detectionThreshHold = 300;  
 const int MAX_TURNS = 200;  
 const int turnTrigger = 7;
 
@@ -141,8 +141,7 @@ void loop() {
           else
           {
             turnCounter = 0;
-            reverse(150);
-            turn(1, 100, 125);  
+            turn(1, 100, 200);  
           }        
         if (currentTurnIndex < MAX_TURNS) {
         turnLog[currentTurnIndex].turnLeft = false;  
@@ -163,8 +162,7 @@ void loop() {
           else
           {
             turnCounter = 0;
-            reverse(150);
-            turn(0, 100, 125);  
+            turn(0, 100, 200);  
           }       
         if (currentTurnIndex < MAX_TURNS) {
         turnLog[currentTurnIndex].turnLeft = true;  
@@ -185,8 +183,8 @@ void loop() {
           else
           {
             turnCounter = 0;
-            reverse(300);
-            turn(0, 100, 125);  
+            reverse(150);
+            turn(0, 100, 200);  
           } 
         if (currentTurnIndex < MAX_TURNS) {
           turnLog[currentTurnIndex].turnLeft = true;  
@@ -207,8 +205,8 @@ void loop() {
           else
           {
             turnCounter = 0;
-            reverse(300);
-            turn(1, 100, 125);  
+            reverse(150);
+            turn(1, 100, 200);  
           }
           if (currentTurnIndex < MAX_TURNS) {
             turnLog[currentTurnIndex].turnLeft = false;  
@@ -230,8 +228,8 @@ void loop() {
           else
           {
             turnCounter = 0;
-            reverse(300);
-            turn(1, 100, 125);  
+            reverse(150);
+            turn(1, 100, 200);  
           }
           if (currentTurnIndex < MAX_TURNS) {
             turnLog[currentTurnIndex].turnLeft = false;  
