@@ -11,6 +11,7 @@ unsigned long previousMillis = 0;
 const long interval = 1000;            
 const int detectionThreshHold = 400;  
 const int MAX_TURNS = 200;  
+const int turnTrigger = 7;
 
 
 unsigned int lineSensorValues[3];
@@ -129,10 +130,10 @@ void loop() {
 
   motors.setSpeeds(75, 75);
   if (lineSensorValues[0] > detectionThreshHold || lineSensorValues[1] > detectionThreshHold || lineSensorValues[2] > detectionThreshHold) {
-
+    delay(50);
     if (lineSensorValues[0] > detectionThreshHold)  
     {
-    if(turnCounter < 3)
+    if(turnCounter < turnTrigger)
           {
           turn(1, 100, 125);  
           turnCounter++;
@@ -154,7 +155,7 @@ void loop() {
 
     if (lineSensorValues[2] > detectionThreshHold)  
     {
-    if(turnCounter < 3)
+    if(turnCounter < turnTrigger)
           {
           turn(0, 100, 125);  
           turnCounter++;
@@ -175,7 +176,7 @@ void loop() {
 
       if (lineSensorValues[2] > detectionThreshHold && lineSensorValues[1] > detectionThreshHold)  
       {
-         if(turnCounter < 3)
+         if(turnCounter < turnTrigger)
           {
           reverse(150);
           turn(0, 100, 125);  
@@ -197,7 +198,7 @@ void loop() {
 
         if (lineSensorValues[0] > detectionThreshHold && lineSensorValues[1] > detectionThreshHold)  
         {
-          if(turnCounter < 3)
+          if(turnCounter < turnTrigger)
           {
           reverse(150);
           turn(1, 100, 125);
@@ -220,7 +221,7 @@ void loop() {
 
         if (lineSensorValues[0] > detectionThreshHold && lineSensorValues[2] > detectionThreshHold)  
         {
-            if(turnCounter < 3)
+            if(turnCounter < turnTrigger)
           {
           reverse(150);
           turn(1, 100, 125);
@@ -244,7 +245,7 @@ void loop() {
         if (lineSensorValues[1] > detectionThreshHold)  
         {
           reverseCounter++;
-          if (reverseCounter < 3) {
+          if (reverseCounter < turnTrigger) {
             reverse(300);
             if (currentTurnIndex < MAX_TURNS) {
               turnLog[currentTurnIndex].turnLeft = false;  
