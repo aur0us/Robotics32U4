@@ -116,7 +116,7 @@ void loop() {
   motors.setSpeeds(75, 75);
   if (lineSensorValues[0] > 500 || lineSensorValues[1] > 500 || lineSensorValues[2] > 500) {
 
-    if (lineSensorValues[0] > 400)  
+    if (lineSensorValues[0] > 600)  
     {
       turn(1, 100, 125);  
       if (currentTurnIndex < MAX_TURNS) {
@@ -128,7 +128,7 @@ void loop() {
       }
     }
 
-    if (lineSensorValues[2] > 400)  
+    if (lineSensorValues[2] > 600)  
     {
       turn(0, 100, 125);  
       if (currentTurnIndex < MAX_TURNS) {
@@ -139,7 +139,7 @@ void loop() {
         currentTurnIndex++;
       }
 
-      if (lineSensorValues[2] > 400 && lineSensorValues[1] > 400)  
+      if (lineSensorValues[2] > 600 && lineSensorValues[1] > 600)  
       {
         reverse(150);
         turn(0, 100, 125);  
@@ -151,7 +151,7 @@ void loop() {
           currentTurnIndex++;
         }
 
-        if (lineSensorValues[0] > 400 && lineSensorValues[1] > 400)  
+        if (lineSensorValues[0] > 600 && lineSensorValues[1] > 600)  
         {
           reverse(150);
           turn(1, 100, 125);  
@@ -164,7 +164,7 @@ void loop() {
           }
         }
 
-        if (lineSensorValues[0] > 400 && lineSensorValues[2] > 400)  
+        if (lineSensorValues[0] > 600 && lineSensorValues[2] > 600)  
         {
           reverse(150);
           turn(1, 100, 125);
@@ -177,7 +177,7 @@ void loop() {
           }
         }
 
-        if (lineSensorValues[1] > 400)  
+        if (lineSensorValues[1] > 500)  
         {
           reverseCounter++;
           if (reverseCounter < 3) {
